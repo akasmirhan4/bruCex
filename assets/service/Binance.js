@@ -29,10 +29,19 @@ async function getResponse(endPointURL, queries, method = "GET", withHeader = tr
 	});
 }
 
+const getExchangeInfo = (fromsymbol, tosymbol = "USDT") => {
+	return new Promise(async (resolve, reject) => {
+		const endPointURL = "/api/v3/exchangeInfo";
+		const queries = {
+		};
+		let response = await getResponse(endPointURL, queries, "GET", false);
+		resolve(response);
+	});
+};
+
 const getExchangeRate = (fromsymbol, tosymbol = "USDT") => {
 	return new Promise(async (resolve, reject) => {
 		const endPointURL = "/api/v3/ticker/price";
-		console.log(fromsymbol + tosymbol);
 		const queries = {
 			symbol: fromsymbol + tosymbol,
 		};
@@ -72,7 +81,6 @@ const UserBuy = (amount, toCoin) => {
 			quantity: amount,
 		};
 		let response = await getResponse(endPointURL, queries, "POST");
-		console.log(response);
 		resolve(response);
 	});
 };
@@ -87,11 +95,10 @@ const UserSell = (amount, toCoin) => {
 			quantity: amount,
 		};
 		let response = await getResponse(endPointURL, queries, "POST");
-		console.log(response);
 		resolve(response);
 	});
 };
 
 const UserTradeCoins = (amount, account, fromCoin, toCoin) => {};
 
-export { getBalance, UserBuy, getExchangeRate, UserSell };
+export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo };
