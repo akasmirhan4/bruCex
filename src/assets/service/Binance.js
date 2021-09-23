@@ -29,12 +29,22 @@ async function getResponse(endPointURL, queries, method = "GET", withHeader = tr
 	});
 }
 
-const getExchangeInfo = (fromsymbol, tosymbol = "USDT") => {
+const getExchangeInfo = () => {
 	return new Promise(async (resolve, reject) => {
 		const endPointURL = "/api/v3/exchangeInfo";
-		const queries = {
-		};
+		const queries = {};
 		let response = await getResponse(endPointURL, queries, "GET", false);
+		resolve(response);
+	});
+};
+
+const getCoinsInfo = () => {
+	return new Promise(async (resolve, reject) => {
+		const endPointURL = "/sapi/v1/capital/config/getall";
+		const queries = {
+			timestamp: Date.now(),
+		};
+		let response = await getResponse(endPointURL, queries, "GET", true);
 		resolve(response);
 	});
 };
@@ -57,8 +67,7 @@ const getBalance = (symbol) => {
 			timestamp: Date.now(),
 		};
 		let response = await getResponse(endPointURL, queries);
-		result = response.balances.find((balance) => balance.asset == symbol);
-		resolve(result);
+		resolve(response);
 	});
 };
 
@@ -101,4 +110,4 @@ const UserSell = (amount, toCoin) => {
 
 const UserTradeCoins = (amount, account, fromCoin, toCoin) => {};
 
-export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo };
+export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo, getCoinsInfo };
