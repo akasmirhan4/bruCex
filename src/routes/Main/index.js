@@ -9,7 +9,7 @@ import Appbar from "../../assets/components/Appbar";
 import * as Haptics from "expo-haptics";
 import { Fragment } from "react";
 import { useState } from "react";
-import ExchangeModal from "../ExchangeModal";
+import ExchangeModal from "./Exchange/ExchangeModal";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
@@ -27,6 +27,7 @@ export default function MainTabNavigators() {
 	const rotateAnim = useRef(new Animated.Value(1)).current;
 	const sizeAnim = useRef(new Animated.Value(1)).current;
 	const opacityAnim2 = useRef(new Animated.Value(1)).current;
+	const opacityAnim3 = useRef(new Animated.Value(0)).current;
 
 	const AnimateIcon = () => {
 		// Animated.sequence([])
@@ -43,6 +44,12 @@ export default function MainTabNavigators() {
 						delay: 100,
 						useNativeDriver: true,
 						toValue: 0,
+						duration: 200,
+					}),
+					Animated.timing(opacityAnim3, {
+						delay: 100,
+						useNativeDriver: true,
+						toValue: 1,
 						duration: 200,
 					}),
 					Animated.sequence([
@@ -88,6 +95,12 @@ export default function MainTabNavigators() {
 						toValue: 1,
 						duration: 200,
 					}),
+					Animated.timing(opacityAnim3, {
+						delay: 300,
+						useNativeDriver: true,
+						toValue: 0,
+						duration: 200,
+					}),
 					Animated.sequence([
 						Animated.timing(opacityAnim, {
 							useNativeDriver: true,
@@ -122,7 +135,6 @@ export default function MainTabNavigators() {
 	return (
 		<Fragment>
 			<SafeAreaView style={{ flex: 0, backgroundColor: colors.card, marginBottom: 0 }} />
-			<ExchangeModal visible={true} />
 			<SafeAreaView style={{ flex: 1 }}>
 				<Tab.Navigator
 					screenOptions={{
@@ -220,6 +232,7 @@ export default function MainTabNavigators() {
 					/>
 				</Tab.Navigator>
 			</SafeAreaView>
+			<ExchangeModal visible={modalVisible} opacityAnim={opacityAnim3}/>
 			<SafeAreaView style={{ flex: 0, backgroundColor: colors.background, marginTop: -55 }} />
 		</Fragment>
 	);
