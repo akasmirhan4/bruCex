@@ -6,8 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, TouchableWithoutFeedback, View, Animated, Easing } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import Appbar from "../../assets/components/Appbar";
+import * as Haptics from "expo-haptics";
 import { Fragment } from "react";
 import { useState } from "react";
+import ExchangeModal from "../ExchangeModal";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
@@ -120,6 +122,7 @@ export default function MainTabNavigators() {
 	return (
 		<Fragment>
 			<SafeAreaView style={{ flex: 0, backgroundColor: colors.card, marginBottom: 0 }} />
+			<ExchangeModal visible={true} />
 			<SafeAreaView style={{ flex: 1 }}>
 				<Tab.Navigator
 					screenOptions={{
@@ -139,6 +142,15 @@ export default function MainTabNavigators() {
 								return <AnimatedIcon name="stats-chart" color={focused ? colors.active : colors.inactive} size={ICON_SIZE} style={{ opacity: opacityAnim2 }} />;
 							},
 						}}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+								if (!modalVisible) {
+									console.log(modalVisible);
+									navigation.navigate("Markets");
+								}
+							},
+						})}
 					/>
 					<Tab.Screen
 						name="Exchange"
@@ -153,6 +165,7 @@ export default function MainTabNavigators() {
 												setModalVisible(!modalVisible);
 											}, 200);
 											AnimateIcon();
+											Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 										}}
 									>
 										<View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -195,6 +208,15 @@ export default function MainTabNavigators() {
 								return <AnimatedIcon name="wallet" color={focused ? colors.active : colors.inactive} size={ICON_SIZE} style={{ opacity: opacityAnim2 }} />;
 							},
 						}}
+						listeners={({ navigation }) => ({
+							tabPress: (e) => {
+								e.preventDefault();
+								if (!modalVisible) {
+									console.log(modalVisible);
+									navigation.navigate("Balances");
+								}
+							},
+						})}
 					/>
 				</Tab.Navigator>
 			</SafeAreaView>
