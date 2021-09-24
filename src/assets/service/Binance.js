@@ -110,4 +110,19 @@ const UserSell = (amount, toCoin) => {
 
 const UserTradeCoins = (amount, account, fromCoin, toCoin) => {};
 
-export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo, getCoinsInfo };
+const getLast24HoursTrade = (coin) => {
+	return new Promise(async (resolve, reject) => {
+		const endPointURL = "/api/v3/klines";
+		const currentDate = Date.now();
+		const queries = {
+			symbol: `${coin}BUSD`,
+			startTime: currentDate - 24 * 60 * 60 * 1000,
+			interval: "1h",
+			endTime: currentDate,
+		};
+		let response = await getResponse(endPointURL, queries, "GET", false);
+		resolve(response);
+	});
+};
+
+export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo, getCoinsInfo, getLast24HoursTrade };

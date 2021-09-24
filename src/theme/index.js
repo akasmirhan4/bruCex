@@ -48,7 +48,7 @@ const theme = {
 		// placeholder: "",
 		// backdrop: "",
 		// onSurface: "",
-		border: "#424c5b", 
+		border: "#29313f", 
 		// notification: "",
 	},
 	fonts: configureFonts(fontConfig),

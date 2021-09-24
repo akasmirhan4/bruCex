@@ -158,7 +158,6 @@ export default function MainTabNavigators() {
 							tabPress: (e) => {
 								e.preventDefault();
 								if (!modalVisible) {
-									console.log(modalVisible);
 									navigation.navigate("Markets");
 								}
 							},
@@ -172,7 +171,6 @@ export default function MainTabNavigators() {
 								return (
 									<TouchableWithoutFeedback
 										onPress={() => {
-											console.log(modalVisible);
 											setTimeout(() => {
 												setModalVisible(!modalVisible);
 											}, 200);
@@ -224,7 +222,6 @@ export default function MainTabNavigators() {
 							tabPress: (e) => {
 								e.preventDefault();
 								if (!modalVisible) {
-									console.log(modalVisible);
 									navigation.navigate("Balances");
 								}
 							},
