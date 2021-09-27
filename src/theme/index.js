@@ -46,10 +46,11 @@ const theme = {
 		inactive: "#424c5b",
 		caption: "#757b87",
 		// disabled: "",
-		// placeholder: "",
+		placeholder: "#757b87",
 		// backdrop: "",
 		// onSurface: "",
 		border: "#29313f", 
+		error: "#D32F2F"
 		// notification: "",
 	},
 	fonts: configureFonts(fontConfig),

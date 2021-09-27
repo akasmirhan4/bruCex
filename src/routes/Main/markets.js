@@ -9,6 +9,7 @@ import SimpleGraph from "../../assets/components/SimpleGraph";
 import { getAvgRecentPrice, getCoinsInfo, getLast24HoursTrade } from "../../assets/service/Binance";
 import CoinSymbolIcon from "../../assets/svgs";
 import SortByModal from "./Exchange/SortByModal";
+
 export default function MarketsScreen() {
 	const roundness = useTheme().roundness;
 	const colors = useTheme().colors;
@@ -103,7 +104,10 @@ export default function MarketsScreen() {
 					sortBy(selectedLabel);
 				}}
 			/>
-			<ScrollView style={{ flex: 1, backgroundColor: colors.card }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+			<ScrollView
+				style={{ flex: 1, backgroundColor: colors.card }}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+			>
 				<View
 					style={{
 						backgroundColor: colors.background,
@@ -115,7 +119,7 @@ export default function MarketsScreen() {
 						paddingVertical: 16,
 					}}
 				>
-					<Title style={{ marginHorizontal: 16, marginVertical: 20 }}>Markets</Title>
+					<Title style={{ marginHorizontal: 16, marginBottom: 20, marginTop: 10 }}>Markets</Title>
 					<View style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal: 16, marginBottom: 16 }}>
 						<View style={{ flexDirection: "row" }}>
 							<Button
@@ -169,7 +173,7 @@ export default function MarketsScreen() {
 										onPress={() => {
 											console.log(coinInfo.name);
 										}}
-										underlayColor="#FFFFFF33"
+										underlayColor="#FFFFFF11"
 									>
 										<View style={{ flexDirection: "row", padding: 16, alignContent: "center" }}>
 											{/* Coin Logo */}
