@@ -1,5 +1,5 @@
 import { useTheme } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 import Expo2DContext from "expo-2d-context";
@@ -12,18 +12,24 @@ export default function SimpleGraph(props) {
 	const minPrice = Math.min(...dayPrices);
 	const priceRange = maxPrice - minPrice;
 	const HEIGHT = 100;
-	const WIDTH = 500;
-	console.log("dayPrices");
+	const WIDTH = 200;
 	const interPolatedY = dayPrices.map((hourPrice) => (1 - (hourPrice - minPrice) / priceRange) * HEIGHT);
-	console.log(interPolatedY);
 	const color = dayPrices[0] < dayPrices[dayPrices.length - 1] ? "green" : "red";
-	console.log(dayPrices[0], dayPrices[dayPrices.length - 1], dayPrices[0] < dayPrices[dayPrices.length - 1]);
 	const dx = WIDTH / (interPolatedY.length - 1);
+    const [gl, setGl] = useState(null)
+	const [rendered, setRendered] = useState(props.rendered);
+
+	useEffect(() => {
+		setRendered(props.rendered);
+		if (gl && !props.rendered) {
+			_onGLContextCreate(gl);
+		}
+	}, [props.rendered]);
 
 	const _onGLContextCreate = (gl) => {
 		let x = 0;
 		var ctx = new Expo2DContext(gl);
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 4;
 		ctx.beginPath();
 		ctx.moveTo(x, interPolatedY[0]);
 		ctx.strokeStyle = color;
@@ -34,6 +40,16 @@ export default function SimpleGraph(props) {
 		}
 		ctx.stroke();
 		ctx.flush();
+		props.onRendered();
+		setRendered(true);
 	};
-	return <GLView {...props} onContextCreate={_onGLContextCreate} />;
+	return (
+		<GLView
+			style={props.style}
+			onContextCreate={(_gl) => {
+				_onGLContextCreate(_gl);
+                setGl(_gl);
+			}}
+		/>
+	);
 }

@@ -9,7 +9,7 @@ export default function ExchangeModal(props) {
 	const colors = useTheme().colors;
 	const roundness = useTheme().roundness;
 	const [display, setDisplay] = useState("none");
-	const navigation = useNavigation()
+	const navigation = useNavigation();
 	const renderContent = () => (
 		<View
 			style={{
@@ -18,8 +18,9 @@ export default function ExchangeModal(props) {
 			}}
 		>
 			<TouchableHighlight
+				underlayColor="#FFFFFF33"
 				onPress={() => {
-					navigation.navigate("Buy")
+					navigation.navigate("Buy");
 				}}
 			>
 				<View style={{ flexDirection: "row", padding: 16 }}>
@@ -32,8 +33,9 @@ export default function ExchangeModal(props) {
 			</TouchableHighlight>
 			<Divider />
 			<TouchableHighlight
+				underlayColor="#FFFFFF33"
 				onPress={() => {
-					navigation.navigate("Sell")
+					navigation.navigate("Sell");
 				}}
 			>
 				<View style={{ flexDirection: "row", padding: 16 }}>
@@ -46,8 +48,9 @@ export default function ExchangeModal(props) {
 			</TouchableHighlight>
 			<Divider />
 			<TouchableHighlight
+				underlayColor="#FFFFFF33"
 				onPress={() => {
-					navigation.navigate("Convert")
+					navigation.navigate("Convert");
 				}}
 			>
 				<View style={{ flexDirection: "row", padding: 16 }}>

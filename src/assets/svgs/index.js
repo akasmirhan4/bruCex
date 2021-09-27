@@ -21,7 +21,7 @@ const CoinSymbolIcon = (props) => {
 	const colors = useTheme().colors;
 	let Icon = coinSymbols[props.symbol];
 	return (
-		<View style={{ borderRadius: "50%", backgroundColor: colors.border, padding: 4 }}>
+		<View style={{ borderRadius: "50%", backgroundColor: "#FFFFFF88", padding: 4 }}>
 			<Icon {...props} />
 		</View>
 	);

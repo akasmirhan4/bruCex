@@ -44,6 +44,7 @@ const theme = {
 		text: "#eeeff8",
 		active: "#e9ecf1",
 		inactive: "#424c5b",
+		caption: "#757b87",
 		// disabled: "",
 		// placeholder: "",
 		// backdrop: "",

@@ -11,7 +11,6 @@ async function getResponse(endPointURL, queries, method = "GET", withHeader = tr
 
 	let url = baseURL + endPointURL + "?" + queriesURL;
 	url = withHeader ? url + "&signature=" + signature : url;
-	console.log(url);
 	return new Promise(async (resolve, reject) => {
 		await fetch(url, {
 			method: method,
@@ -125,4 +124,15 @@ const getLast24HoursTrade = (coin) => {
 	});
 };
 
-export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo, getCoinsInfo, getLast24HoursTrade };
+const getAvgRecentPrice = (coin) => {
+	return new Promise(async (resolve, reject) => {
+		const endPointURL = "/api/v3/avgPrice";
+		const queries = {
+			symbol: `${coin}BUSD`,
+		};
+		let response = await getResponse(endPointURL, queries, "GET", false);
+		resolve(response.price);
+	});
+};
+
+export { getBalance, UserBuy, getExchangeRate, UserSell, getExchangeInfo, getCoinsInfo, getLast24HoursTrade, getAvgRecentPrice };
