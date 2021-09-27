@@ -2,6 +2,7 @@ import { useTheme, useNavigation, DrawerActions } from "@react-navigation/native
 import * as React from "react";
 import { View } from "react-native";
 import { IconButton, Subheading, Text } from "react-native-paper";
+import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Appbar() {
@@ -25,6 +26,7 @@ export default function Appbar() {
 					size={28}
 					color={colors.primary}
 					onPress={() => {
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 						navigation.dispatch(DrawerActions.openDrawer());
 					}}
 				/>

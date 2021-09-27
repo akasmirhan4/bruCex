@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Keyboard, SafeAreaView, View, TouchableWithoutFeedback, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Button, Caption, Divider, HelperText, IconButton, Subheading, TextInput, Title, useTheme } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
-import { auth, loginWithEmailAndPassword, registerNewUser } from "../../assets/service/Firebase";
+import { Caption, Divider, HelperText, IconButton, Subheading, TextInput, Title, useTheme } from "react-native-paper";
+import { auth, registerNewUser } from "../../assets/service/Firebase";
 import { setUserData } from "../../assets/service/UserData";
+import * as Haptics from "expo-haptics";
 
 export default function Register({ navigation }) {
 	const colors = useTheme().colors;
@@ -173,6 +173,7 @@ export default function Register({ navigation }) {
 							icon="arrow-right"
 							color={colors.background}
 							onPress={async () => {
+								Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 								setErrors(null);
 								await registerNewUser(firstName, lastName, email, pwd, checkPwd, phoneNo)
 									.then((result) => {

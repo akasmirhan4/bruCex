@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Keyboard, SafeAreaView, View, TouchableWithoutFeedback } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Button, Caption, IconButton, Subheading, TextInput, Title, useTheme } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
+import { Caption, IconButton, Subheading, TextInput, Title, useTheme } from "react-native-paper";
 import { loginWithEmailAndPassword } from "../../assets/service/Firebase";
+import * as Haptics from "expo-haptics";
 
 export default function Login({ navigation }) {
 	const colors = useTheme().colors;
@@ -119,6 +119,7 @@ export default function Login({ navigation }) {
 						icon="arrow-right"
 						color={colors.background}
 						onPress={async() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 							await loginWithEmailAndPassword(email, pwd)
 								.then((result) => {
                                     navigation.navigate("MainTab", { successMsg: "User registered" });

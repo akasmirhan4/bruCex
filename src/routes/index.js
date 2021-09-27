@@ -9,6 +9,7 @@ import { Dimensions } from "react-native";
 import { useTheme, useNavigationContainerRef } from "@react-navigation/native";
 import DrawerContent from "./DrawerContent";
 import AuthStackNavigation from "./Auth";
+import Authenticate from "./Auth/Authenticate";
 
 let AppDrawer = createDrawerNavigator();
 let RootStack = createStackNavigator();
@@ -25,6 +26,7 @@ function IndexDrawerNavigation(props) {
 		>
 			<AppDrawer.Screen name="MainTab" component={MainTabNavigators} options={{ headerShown: false }} />
 			<AppDrawer.Screen name="AuthStack" component={AuthStackNavigation} options={{ headerShown: false }} />
+			<AppDrawer.Screen name="Authenticate" component={Authenticate} options={{ headerShown: false }} />
 		</AppDrawer.Navigator>
 	);
 }

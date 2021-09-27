@@ -48,7 +48,7 @@ const getCoinsInfo = () => {
 	});
 };
 
-const getExchangeRate = (fromsymbol, tosymbol = "USDT") => {
+const getExchangeRate = (fromsymbol, tosymbol = "BUSD") => {
 	return new Promise(async (resolve, reject) => {
 		const endPointURL = "/api/v3/ticker/price";
 		const queries = {

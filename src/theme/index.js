@@ -45,7 +45,7 @@ const theme = {
 		active: "#e9ecf1",
 		inactive: "#424c5b",
 		caption: "#757b87",
-		// disabled: "",
+		disabled: "#424c5b",
 		placeholder: "#757b87",
 		// backdrop: "",
 		// onSurface: "",

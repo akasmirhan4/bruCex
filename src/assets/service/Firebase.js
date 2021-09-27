@@ -39,9 +39,17 @@ const loginWithEmailAndPassword = async (email, password) => {
 			.then(resolve)
 			.catch((error) => {
 				if (error.code == "auth/internal-error") {
-					reject("Invalid login details (Register if you are new)");
+					reject("Invalid login details");
+				} else if (error.code == "auth/user-not-found") {
+					reject("Invalid login details");
+				} else if (error.code == "auth/wrong-password") {
+					reject("Invalid login details");
+				} else if (error.code == "auth/too-many-requests") {
+					reject("Too many attempted requests. Please try again later.");
 				} else {
-					console.log("idk");
+					console.log(error.code);
+					console.log("unsure error code");
+					reject(error.code);
 				}
 			});
 	});
@@ -52,8 +60,8 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 		/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return new Promise(async (resolve, reject) => {
 		let errors = {
-            firstName: [],
-            lastName: [],
+			firstName: [],
+			lastName: [],
 			email: [],
 			password: [],
 			checkPassword: [],
@@ -61,10 +69,10 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 			register: [],
 		};
 		console.log(firstName, lastName, email, password, checkPassword, phoneNo);
-        if (!firstName) {
+		if (!firstName) {
 			errors.firstName.push("Enter your first name");
 		}
-        if (!lastName) {
+		if (!lastName) {
 			errors.lastName.push("Enter your last name");
 		}
 		if (!email) {
@@ -101,8 +109,8 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 				.then(async (userCredential) => {
 					const uid = userCredential.user.uid;
 					await firestore.collection("users").doc(uid).set({
-                        firstName,
-                        lastName,
+						firstName,
+						lastName,
 						userID: generateID(),
 						email,
 						phoneNo,
@@ -110,6 +118,7 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 					});
 					console.log("register successful");
 					resolve(userCredential);
+					auth().currentUser.sendEmailVerification();
 				})
 				.catch((error) => {
 					if (error.code == "auth/email-already-in-use") {
@@ -133,7 +142,20 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 	});
 };
 
-export { firebaseConfig, functions, firestore, auth, loginWithEmailAndPassword, registerNewUser };
+const getPhoneNo = () => {
+	return new Promise(async (resolve, reject) => {
+		await firestore
+			.collection("users")
+			.doc(auth().currentUser.uid)
+			.get()
+			.then((user) => {
+				resolve(user.data().phoneNo);
+			})
+			.catch(reject);
+	});
+};
+
+export { firebaseConfig, functions, firestore, auth, loginWithEmailAndPassword, registerNewUser, getPhoneNo };
 
 const generateID = () => {
 	let result = new Date().valueOf() - new Date("June 6, 1997 00:00:00").valueOf();
