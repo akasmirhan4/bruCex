@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MarketsScreen from "./markets";
 import BalancesScreen from "./balances";
@@ -10,6 +10,7 @@ import * as Haptics from "expo-haptics";
 import { Fragment } from "react";
 import { useState } from "react";
 import ExchangeModal from "./Exchange/ExchangeModal";
+import SuccessModal from "../../assets/components/SuccessModal";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
@@ -18,10 +19,12 @@ const PlaceHolder = (props) => {
 	return <View style={{ flex: 1, backgroundColor: "blue" }} />;
 };
 
-export default function MainTabNavigators() {
+export default function MainTabNavigators({ navigation, route }) {
 	const ICON_SIZE = 24;
 	const colors = useTheme().colors;
 	const [modalVisible, setModalVisible] = useState(false);
+	const [successModalVisible, setSuccessModalVisible] = useState(false);
+	const [modalMsg, setModalMsg] = useState("");
 
 	const opacityAnim = useRef(new Animated.Value(1)).current;
 	const rotateAnim = useRef(new Animated.Value(1)).current;
@@ -132,10 +135,24 @@ export default function MainTabNavigators() {
 		}
 	};
 
+	useEffect(() => {
+		if (!!route.params?.successMsg) {
+			setModalMsg(route.params?.successMsg);
+			setSuccessModalVisible(true);
+		}
+	}, [route.params?.successMsg]);
+
 	return (
 		<Fragment>
 			<SafeAreaView style={{ flex: 0, backgroundColor: colors.card, marginBottom: 0 }} />
 			<SafeAreaView style={{ flex: 1 }}>
+				<SuccessModal
+					msg={modalMsg}
+					visible={successModalVisible}
+					onEnd={() => {
+						setSuccessModalVisible(false);
+					}}
+				/>
 				<Tab.Navigator
 					screenOptions={{
 						tabBarShowLabel: false,
@@ -229,7 +246,7 @@ export default function MainTabNavigators() {
 					/>
 				</Tab.Navigator>
 			</SafeAreaView>
-			<ExchangeModal visible={modalVisible} opacityAnim={opacityAnim3}/>
+			<ExchangeModal visible={modalVisible} opacityAnim={opacityAnim3} />
 			<SafeAreaView style={{ flex: 0, backgroundColor: colors.background, marginTop: -55 }} />
 		</Fragment>
 	);

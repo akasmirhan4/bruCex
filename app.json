@@ -29,7 +29,7 @@
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
-    "description": "simple login system need to auth",
+    "description": "added auth",
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": [

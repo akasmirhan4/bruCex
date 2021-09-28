@@ -60,20 +60,17 @@ export default function MarketsScreen() {
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		await getDayPrices();
-		console.log("refreshing...");
 		setRendered(false);
 	}, []);
 
 	useEffect(() => {
 		getDayPrices();
 		return () => {
-			console.log("clearing interval");
 			clearInterval(intervalID);
 		};
 	}, []);
 
 	useEffect(() => {
-		console.log(intervalID);
 		if (!isFocused) {
 			console.log("clearing interval");
 			clearInterval(intervalID);

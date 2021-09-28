@@ -43,6 +43,7 @@ export default function DrawerContent(props) {
 					});
 			} else {
 				setUserLoggedIn(false);
+				navigation.navigate("MainTab", { successMsg: "Logged Out" });
 			}
 		});
 	}, []);

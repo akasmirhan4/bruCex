@@ -122,7 +122,7 @@ export default function Login({ navigation }) {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 							await loginWithEmailAndPassword(email, pwd)
 								.then((result) => {
-                                    navigation.navigate("MainTab", { successMsg: "User registered" });
+                                    navigation.navigate("MainTab", { successMsg: "Logged In" });
                                 })
 								.catch(setError);
 						}}

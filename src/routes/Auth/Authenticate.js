@@ -29,7 +29,6 @@ export default function Authenticate({ navigation }) {
 	const checkSMSCode = async (SMSCode) => {
 		if (!!verificationId) {
 			try {
-				console.log(verificationId, verificationCode);
 				const credential = auth.PhoneAuthProvider.credential(verificationId, SMSCode);
 				await auth()
 					.currentUser.linkWithCredential(credential)
@@ -68,18 +67,15 @@ export default function Authenticate({ navigation }) {
 							console.warn(error.code);
 						}
 					});
-				console.log("refresh");
 				const emailVerified = auth().currentUser.emailVerified;
 				setIsEmailVerified(emailVerified);
 				if (emailVerified) {
-					console.log("stopping refresh");
 					clearInterval(checkEmailVerified);
 				}
 			}, 3000);
 		}
 
 		return () => {
-			console.log("stopping refresh");
 			clearInterval(checkEmailVerified);
 			clearInterval(SMSResend);
 		};

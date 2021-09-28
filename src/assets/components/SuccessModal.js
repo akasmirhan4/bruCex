@@ -8,7 +8,7 @@ export default function SuccessModal(props) {
 	const roundness = useTheme().roundness;
 	const colors = useTheme().colors;
 	const [visible, setVisible] = useState(false);
-	const DURATION = 1000;
+	const DURATION = 3000;
 	let fadeTimeOut = null;
 
 	const start = () => {
@@ -27,7 +27,6 @@ export default function SuccessModal(props) {
 	}, []);
 
 	useEffect(() => {
-		console.log(props.msg);
 		if (!!props.msg && props.visible) {
 			start();
 		}
@@ -35,7 +34,7 @@ export default function SuccessModal(props) {
 
 	return (
 		<Portal>
-			<Modal visible={visible} style={{ justifyContent: "center", alignItems: "center" }}>
+			<Modal visible={visible} style={{ justifyContent: "center", alignItems: "center" }} onDismiss={()=>setVisible(false)}>
 				<View style={{ backgroundColor: colors.caption, width: 120, height: 120, justifyContent: "center", alignItems: "center", borderRadius: roundness }}>
 					<Ionicons name="checkmark-circle-outline" size={76} color={colors.text} />
 					<Caption>{props.msg}</Caption>

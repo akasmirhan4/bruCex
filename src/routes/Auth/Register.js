@@ -161,8 +161,6 @@ export default function Register({ navigation }) {
 					/>
 					{!!errors?.phoneNo?.length &&
 						errors?.phoneNo?.map((error, index) => {
-							console.log("index", index);
-							console.log(errors?.phoneNo.length);
 							return <HelperText type="error" key={index} children={error} />;
 						})}
 					<View style={{ flexDirection: "row", justifyContent: "flex-start", marginTop: 12 }}></View>
@@ -179,7 +177,7 @@ export default function Register({ navigation }) {
 									.then((result) => {
 										console.log("uid: ", auth().currentUser.uid);
 										setUserData(email, phoneNo, firstName, lastName);
-										navigation.navigate("MainTab", { successMsg: "User registered" });
+										navigation.navigate("MainTab", { successMsg: "Registered" });
 									})
 									.catch((errors) => {
 										console.log(errors);
