@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Caption, IconButton, Subheading, TextInput, Title, useTheme } from "react-native-paper";
 import { loginWithEmailAndPassword } from "../../assets/service/Firebase";
 import * as Haptics from "expo-haptics";
+import { CommonActions } from "@react-navigation/routers";
 
 export default function Login({ navigation }) {
 	const colors = useTheme().colors;
@@ -32,6 +33,12 @@ export default function Login({ navigation }) {
 						icon="close"
 						color={colors.caption}
 						onPress={() => {
+							navigation.dispatch(
+								CommonActions.reset({
+									index: 0,
+									routes: [{ name: "Login" }],
+								})
+							);
 							navigation.navigate("MainTab");
 						}}
 						style={{ marginLeft: -8 }}

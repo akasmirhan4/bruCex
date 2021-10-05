@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import MarketsScreen from "./markets";
 import BalancesScreen from "./balances";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, TouchableWithoutFeedback, View, Animated, Easing } from "react-native";
@@ -11,6 +10,7 @@ import { Fragment } from "react";
 import { useState } from "react";
 import ExchangeModal from "./Exchange/ExchangeModal";
 import SuccessModal from "../../assets/components/SuccessModal";
+import MarketStackNavigation from "./Markets";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
@@ -164,9 +164,10 @@ export default function MainTabNavigators({ navigation, route }) {
 					}}
 				>
 					<Tab.Screen
-						name="Markets"
-						component={MarketsScreen}
+						name="Markets Stack"
+						component={MarketStackNavigation}
 						options={{
+							headerShown: false,
 							tabBarIcon: ({ focused, color, size }) => {
 								return <AnimatedIcon name="stats-chart" color={focused ? colors.active : colors.inactive} size={ICON_SIZE} style={{ opacity: opacityAnim2 }} />;
 							},

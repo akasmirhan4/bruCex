@@ -3,14 +3,14 @@ import { useIsFocused } from "@react-navigation/core";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, TouchableHighlight, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { ActivityIndicator, Button, Caption, Subheading, Title, useTheme } from "react-native-paper";
-import { set } from "react-native-reanimated";
-import SimpleGraph from "../../assets/components/SimpleGraph";
-import { getAvgRecentPrice, getCoinsInfo, getLast24HoursTrade } from "../../assets/service/Binance";
-import CoinSymbolIcon from "../../assets/svgs";
-import SortByModal from "./Exchange/SortByModal";
+import { Button, Caption, Subheading, Title, useTheme } from "react-native-paper";
+import SimpleGraph from "../../../assets/components/SimpleGraph";
+import { GetAvgRecentPrice, GetKlineTrade } from "../../../assets/service/Binance";
+import { functions } from "../../../assets/service/Firebase";
+import CoinSymbolIcon from "../../../assets/svgs";
+import SortByModal from "../Exchange/SortByModal";
 
-export default function MarketsScreen() {
+export default function MarketsScreen({ navigation }) {
 	const roundness = useTheme().roundness;
 	const colors = useTheme().colors;
 	const [favoriteOn, setFavoriteOn] = useState(false);
@@ -26,31 +26,36 @@ export default function MarketsScreen() {
 	const isFocused = useIsFocused();
 	const LIVE_INTERVAL = 7000;
 	const [refreshing, setRefreshing] = useState(false);
+	let percentFormatter = new Intl.NumberFormat("en-US", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: "always" });
 
 	const getDayPrices = async () => {
-		await getCoinsInfo().then(async (coinsInfo) => {
-			let _coinsInfo = [];
-			let batchPromises = [];
-			selectedCoins.forEach((coin) => {
-				let result = coinsInfo.find((coinInfo) => coinInfo.coin == coin);
-				_coinsInfo.push({ coin, name: result.name });
-				batchPromises.push(getLast24HoursTrade(coin));
-			});
-			await Promise.all(batchPromises).then((dayHistories) => {
-				let _recentPrices = [];
-				dayHistories.forEach((dayHistory, index) => {
-					let dayPrices = [dayHistory[0][1]];
-					dayHistory.forEach((hourHistory) => {
-						dayPrices.push(hourHistory[4]);
-					});
-					_coinsInfo[index].dayPrices = dayPrices;
-					_recentPrices.push(dayPrices[dayPrices.length - 1]);
-					_coinsInfo[index].initialDayPrice = dayPrices[0];
+		await functions
+			.httpsCallable("GetCoinsInfo")()
+			.then(async (response) => {
+				const coinsInfo = response.data.response;
+				let _coinsInfo = [];
+				let batchPromises = [];
+				selectedCoins.forEach((coin) => {
+					let result = coinsInfo.find((coinInfo) => coinInfo.coin == coin);
+					_coinsInfo.push({ coin, name: result.name });
+					batchPromises.push(GetKlineTrade(coin));
 				});
-				setRecentPrices(_recentPrices);
+				await Promise.all(batchPromises).then((results) => {
+					let _recentPrices = [];
+					results.forEach((result, index) => {
+						const dayHistory = result.data;
+						let dayPrices = [dayHistory[0][1]];
+						dayHistory.forEach((hourHistory) => {
+							dayPrices.push(hourHistory[4]);
+						});
+						_coinsInfo[index].dayPrices = dayPrices;
+						_recentPrices.push(dayPrices[dayPrices.length - 1]);
+						_coinsInfo[index].initialDayPrice = dayPrices[0];
+					});
+					setRecentPrices(_recentPrices);
+				});
+				setCoinsInfo(_coinsInfo);
 			});
-			setCoinsInfo(_coinsInfo);
-		});
 	};
 
 	const sortBy = (label) => {
@@ -79,11 +84,14 @@ export default function MarketsScreen() {
 				setInterval(() => {
 					let batchPromises = [];
 					selectedCoins.forEach((coin) => {
-						batchPromises.push(getAvgRecentPrice(coin));
+						batchPromises.push(GetAvgRecentPrice(coin));
 					});
-					Promise.all(batchPromises).then((results) => {
-						setRecentPrices(results);
-					});
+					Promise.all(batchPromises)
+						.then((results) => {
+							let prices = results.map((result) => result.data.price);
+							setRecentPrices(prices);
+						})
+						.catch(console.error);
 				}, LIVE_INTERVAL)
 			);
 		}
@@ -163,12 +171,12 @@ export default function MarketsScreen() {
 							{/* Loop coins */}
 							{coinsInfo.map((coinInfo, index) => {
 								const coinSymbol = coinInfo.coin;
-								const priceChange = (((recentPrices[index] - coinInfo.initialDayPrice) / coinInfo.initialDayPrice) * 100).toFixed(2);
+								const priceChange = (recentPrices[index] - coinInfo.initialDayPrice) / coinInfo.initialDayPrice;
 								return (
 									<TouchableHighlight
 										key={index}
 										onPress={() => {
-											console.log(coinInfo.name);
+											navigation.navigate("Coin Details", { coinInfo });
 										}}
 										underlayColor="#FFFFFF11"
 									>
@@ -199,7 +207,7 @@ export default function MarketsScreen() {
 												{/* Coin Recent Price */}
 												<Subheading>{formatter.format(recentPrices[index])}</Subheading>
 												{/* Coin Recent %Gain/Loss */}
-												<Caption style={{ color: priceChange < 0 ? "red" : "green" }}>{`${priceChange}%`}</Caption>
+												<Caption style={{ color: priceChange < 0 ? "red" : "green" }}>{percentFormatter.format(priceChange)}</Caption>
 											</View>
 										</View>
 									</TouchableHighlight>

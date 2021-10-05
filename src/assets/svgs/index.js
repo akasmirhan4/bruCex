@@ -7,6 +7,7 @@ import BTC from "./BTC.svg";
 import ETH from "./ETH.svg";
 import LTC from "./LTC.svg";
 import XRP from "./XRP.svg";
+import BUSD from "./BUSD.svg";
 
 const coinSymbols = {
 	ADA: ADA,
@@ -15,6 +16,7 @@ const coinSymbols = {
 	ETH: ETH,
 	LTC: LTC,
 	XRP: XRP,
+	BUSD: BUSD,
 };
 
 const CoinSymbolIcon = (props) => {

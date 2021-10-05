@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, SafeAreaView, View, TouchableWithoutFeedback, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Caption, Divider, HelperText, IconButton, Subheading, TextInput, Title, useTheme } from "react-native-paper";
 import { auth, registerNewUser } from "../../assets/service/Firebase";
 import { setUserData } from "../../assets/service/UserData";
 import * as Haptics from "expo-haptics";
+import { useIsFocused } from "@react-navigation/core";
+import { CommonActions } from "@react-navigation/native";
 
 export default function Register({ navigation }) {
 	const colors = useTheme().colors;
@@ -17,6 +19,8 @@ export default function Register({ navigation }) {
 	const [logInPhone, setLogInPhone] = useState(false);
 	const [pwdVisible, setPwdVisible] = useState(false);
 	const [errors, setErrors] = useState(null);
+	const scrollViewRef = useRef(null);
+	const isFocused = useIsFocused();
 
 	useEffect(() => {
 		setErrors(null);
@@ -28,7 +32,7 @@ export default function Register({ navigation }) {
 				Keyboard.dismiss();
 			}}
 		>
-			<ScrollView contentContainerStyle={{ paddingBottom: 300 }}>
+			<ScrollView contentContainerStyle={{ paddingBottom: 400 }} ref={scrollViewRef}>
 				<SafeAreaView style={{ flex: 1, margin: 16 }}>
 					{/* Appbar */}
 					<View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -36,6 +40,12 @@ export default function Register({ navigation }) {
 							icon="close"
 							color={colors.caption}
 							onPress={() => {
+								navigation.dispatch(
+									CommonActions.reset({
+										index: 0,
+										routes: [{ name: "Register" }],
+									})
+								);
 								navigation.navigate("MainTab");
 							}}
 							style={{ marginLeft: -8 }}
@@ -61,6 +71,9 @@ export default function Register({ navigation }) {
 								value={firstName}
 								onChangeText={setFirstName}
 								error={errors?.firstName.length}
+								onFocus={() => {
+									scrollViewRef.current.scrollTo({ y: 0 });
+								}}
 								right={firstName && <TextInput.Icon name="close-circle" color={colors.caption} onPress={() => setFirstName("")} />}
 							/>
 							{!!errors?.firstName?.length &&
@@ -78,6 +91,9 @@ export default function Register({ navigation }) {
 								value={lastName}
 								onChangeText={setLastName}
 								error={errors?.lastName.length}
+								onFocus={() => {
+									scrollViewRef.current.scrollTo({ y: 0 });
+								}}
 								right={lastName && <TextInput.Icon name="close-circle" color={colors.caption} onPress={() => setLastName("")} />}
 							/>
 							{!!errors?.lastName?.length &&
@@ -97,6 +113,9 @@ export default function Register({ navigation }) {
 						onChangeText={(email) => {
 							setEmail(email);
 						}}
+						onFocus={() => {
+							scrollViewRef.current.scrollTo({ y: 0 });
+						}}
 						error={errors?.email.length}
 						right={email && <TextInput.Icon name="close-circle" color={colors.caption} onPress={() => setEmail("")} />}
 					/>
@@ -109,11 +128,15 @@ export default function Register({ navigation }) {
 						keyboardAppearance="dark"
 						keyboardType="ascii-capable"
 						autoCompleteType="password"
-						textContentType="newPassword"
+						textContentType="password"
+						blurOnSubmit={false}
 						style={{ marginVertical: 8 }}
 						value={pwd}
 						onChangeText={(pwd) => {
 							setPwd(pwd);
+						}}
+						onFocus={() => {
+							scrollViewRef.current.scrollTo({ y: 50 });
 						}}
 						error={errors?.password.length}
 						secureTextEntry={!pwdVisible}
@@ -128,11 +151,15 @@ export default function Register({ navigation }) {
 						keyboardAppearance="dark"
 						keyboardType="ascii-capable"
 						autoCompleteType="password"
-						textContentType="newPassword"
+						textContentType="password"
 						style={{ marginVertical: 8 }}
 						value={checkPwd}
+						blurOnSubmit={false}
 						onChangeText={(pwd) => {
 							setCheckPwd(pwd);
+						}}
+						onFocus={() => {
+							scrollViewRef.current.scrollTo({ y: 100 });
 						}}
 						error={errors?.checkPassword.length}
 						secureTextEntry={!pwdVisible}
@@ -156,6 +183,9 @@ export default function Register({ navigation }) {
 							if (phoneNo.length > 4) {
 								setPhoneNo(phoneNo);
 							}
+						}}
+						onFocus={() => {
+							scrollViewRef.current.scrollToEnd();
 						}}
 						right={phoneNo.length > 5 && <TextInput.Icon name="close-circle" color={colors.caption} onPress={() => setPhoneNo("+673 ")} />}
 					/>

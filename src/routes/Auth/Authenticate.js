@@ -2,8 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme, useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, SafeAreaView, ScrollView, TouchableWithoutFeedback, View } from "react-native";
-import { ActivityIndicator, Button, Caption, Divider, IconButton, Subheading, TextInput, Title } from "react-native-paper";
-import { auth, firebaseConfig, getPhoneNo, setPhoneVerified, userPhoneVerified } from "../../assets/service/Firebase";
+import { ActivityIndicator, Button, Caption, Divider, IconButton, ProgressBar, Subheading, TextInput, Title } from "react-native-paper";
+import { auth, firebaseConfig, getPhoneNo, setPhoneVerified, userPhoneVerified, validateSendEmail } from "../../assets/service/Firebase";
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from "expo-firebase-recaptcha";
 
 export default function Authenticate({ navigation }) {
@@ -51,8 +51,10 @@ export default function Authenticate({ navigation }) {
 
 		(async () => {
 			setIsPhoneVerified(!!auth().currentUser.phoneNumber);
-			await getPhoneNo().then((result) => {
-				setPhoneNo(result);
+			await Promise.all([getPhoneNo(), validateSendEmail()]).then((results) => {
+				setPhoneNo(results[0]);
+				console.log(results);
+				setEmailSent(!results[1]);
 			});
 		})();
 
@@ -101,10 +103,11 @@ export default function Authenticate({ navigation }) {
 							style={{ marginLeft: -8 }}
 						/>
 					</View>
-					<View style={{ flexDirection: "row", alignItems: "center", marginTop: 12, marginLeft: 4, marginBottom: 24 }}>
+					<View style={{ flexDirection: "row", alignItems: "center", marginTop: 12, marginLeft: 4, marginBottom: 8 }}>
 						<Title style={{ fontSize: 24, marginRight: 16 }}>Identity Verification</Title>
 						<Ionicons name="shield-checkmark-outline" size={24} color={colors.primary} />
 					</View>
+					<ProgressBar style={{ marginBottom: 24 }} progress={(1 + isPhoneVerified + isEmailVerified) / 3} />
 					{/* Main */}
 					<View style={{ flexDirection: "row" }}>
 						<Subheading children="Email Authentication " />

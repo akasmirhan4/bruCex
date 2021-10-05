@@ -10,6 +10,7 @@ import { useTheme, useNavigationContainerRef } from "@react-navigation/native";
 import DrawerContent from "./DrawerContent";
 import AuthStackNavigation from "./Auth";
 import Authenticate from "./Auth/Authenticate";
+import CoinDetailsScreen from "./Main/Markets/CoinDetails";
 
 let AppDrawer = createDrawerNavigator();
 let RootStack = createStackNavigator();
@@ -38,6 +39,7 @@ export default function RootStackNavigation(props) {
 			<RootStack.Screen name="Buy" component={BuyScreen} options={{ headerShown: true }} />
 			<RootStack.Screen name="Sell" component={SellScreen} options={{ headerShown: true }} />
 			<RootStack.Screen name="Convert" component={ConvertScreen} options={{ headerShown: true }} />
+			<RootStack.Screen name="Coin Details" component={CoinDetailsScreen} options={{ headerShown: false }} />
 		</RootStack.Navigator>
 	);
 }

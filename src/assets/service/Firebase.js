@@ -108,14 +108,18 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 				.createUserWithEmailAndPassword(email, password)
 				.then(async (userCredential) => {
 					const uid = userCredential.user.uid;
-					await firestore.collection("users").doc(uid).set({
-						firstName,
-						lastName,
-						userID: generateID(),
-						email,
-						phoneNo,
-						dateRegistered: new Date(),
-					});
+					await firestore
+						.collection("users")
+						.doc(uid)
+						.set({
+							firstName,
+							lastName,
+							userID: generateID(),
+							email,
+							phoneNo,
+							dateRegistered: new Date(),
+							emailTimeOut: new Date(new Date().getTime() + 1000 * 60 * 60 * 24),
+						});
 					console.log("register successful");
 					resolve(userCredential);
 					auth().currentUser.sendEmailVerification();
@@ -155,7 +159,20 @@ const getPhoneNo = () => {
 	});
 };
 
-export { firebaseConfig, functions, firestore, auth, loginWithEmailAndPassword, registerNewUser, getPhoneNo };
+const validateSendEmail = () => {
+	return new Promise(async (resolve, reject) => {
+		await firestore
+			.collection("users")
+			.doc(auth().currentUser.uid)
+			.get()
+			.then((user) => {
+				resolve(new Date(user.data().emailTimeOut.seconds * 1000) < new Date());
+			})
+			.catch(reject);
+	});
+};
+
+export { firebaseConfig, functions, firestore, auth, loginWithEmailAndPassword, registerNewUser, getPhoneNo, validateSendEmail, GetOutboundIP };
 
 const generateID = () => {
 	let result = new Date().valueOf() - new Date("June 6, 1997 00:00:00").valueOf();
@@ -165,4 +182,8 @@ const generateID = () => {
 	}${resultStr[resultStr.length - 4]}0`;
 
 	return parseInt(result2Str);
+};
+
+const GetOutboundIP = async () => {
+	await functions.httpsCallable("GetExchangeInfo")().then(console.log).catch(console.warn);
 };
