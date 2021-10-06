@@ -7,6 +7,7 @@ export default function DonutChart(props) {
 	const data = !!props.data && props.data.length ? props.data.sort((a, b) => b.worth > a.worth) : null;
 	let labels = [];
 	const nData = data ? data.length : 0;
+	console.log(data);
 	const totalValue = data
 		? data.reduce((x1, x2) => {
 				return {

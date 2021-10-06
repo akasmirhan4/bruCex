@@ -29,7 +29,7 @@
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
-    "description": "added balance screen",
+    "description": "added more coins",
     "packagerOpts": {
       "config": "metro.config.js",
       "sourceExts": [

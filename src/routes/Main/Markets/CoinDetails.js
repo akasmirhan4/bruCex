@@ -46,7 +46,6 @@ const Bottombar = (props) => {
 	const [currentPrice, setCurrentPrice] = useState(props.currentPrice ?? 0);
 	const [loggedIn, setLoggedIn] = useState(false);
 	let currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
-	let coinFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: props.coin, maximumFractionDigits: 8 });
 
 	useEffect(() => {
 		setLoggedIn(!!auth().currentUser);
@@ -58,7 +57,7 @@ const Bottombar = (props) => {
 			<SafeAreaView style={{ backgroundColor: colors.background, borderTopWidth: 1, borderTopColor: colors.border, alignItems: "center" }}>
 				<View style={{ flexDirection: "row", padding: 16 }}>
 					<View style={{ flex: 1 }}>
-						<Title>{`${coinFormatter.format(coinBalance)}`}</Title>
+						<Title>{`${Number(coinBalance).toFixed(8)} ${props.coin}`}</Title>
 						<Caption style={{ color: colors.altText }}>{`≈${currencyFormatter.format(coinBalance * currentPrice)}`}</Caption>
 					</View>
 					<View style={{ justifyContent: "center" }}>

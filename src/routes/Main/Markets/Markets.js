@@ -1,26 +1,28 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/core";
 import React, { useCallback, useEffect, useState } from "react";
-import { RefreshControl, TouchableHighlight, View } from "react-native";
+import { RefreshControl, SafeAreaView, TouchableHighlight, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Caption, Subheading, Title, useTheme } from "react-native-paper";
 import SimpleGraph from "../../../assets/components/SimpleGraph";
 import { GetAvgRecentPrice, GetKlineTrade } from "../../../assets/service/Binance";
 import { functions } from "../../../assets/service/Firebase";
-import CoinSymbolIcon from "../../../assets/svgs";
+import { CoinSymbolIcon, getAvailableCoinSymbols } from "../../../assets/svgs";
 import SortByModal from "../Exchange/SortByModal";
 
 export default function MarketsScreen({ navigation }) {
+	console.log("MARKET!!!");
 	const roundness = useTheme().roundness;
 	const colors = useTheme().colors;
 	const [favoriteOn, setFavoriteOn] = useState(false);
 	const [intervalID, setIntervalID] = useState(null);
 	const [recentPrices, setRecentPrices] = useState([]);
 	const [rendered, setRendered] = useState(false);
+	const COINS_IGNORE = ["BUSD", "USDT", "USDC"];
 	const [showSortBy, setShowSortBy] = useState(false);
 	const [selectedLabel, setSelectedLabel] = useState("Hot");
 
-	let selectedCoins = ["BTC", "ETH", "LTC", "BNB", "XRP", "ADA"];
+	let selectedCoins = getAvailableCoinSymbols();
 	const [coinsInfo, setCoinsInfo] = useState([]);
 	let formatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 	const isFocused = useIsFocused();
@@ -36,9 +38,11 @@ export default function MarketsScreen({ navigation }) {
 				let _coinsInfo = [];
 				let batchPromises = [];
 				selectedCoins.forEach((coin) => {
-					let result = coinsInfo.find((coinInfo) => coinInfo.coin == coin);
-					_coinsInfo.push({ coin, name: result.name });
-					batchPromises.push(GetKlineTrade(coin));
+					if (!COINS_IGNORE.includes(coin)) {
+						let result = coinsInfo.find((coinInfo) => coinInfo.coin == coin);
+						_coinsInfo.push({ coin, name: result.name });
+						batchPromises.push(GetKlineTrade(coin));
+					}
 				});
 				await Promise.all(batchPromises).then((results) => {
 					let _recentPrices = [];
@@ -84,7 +88,7 @@ export default function MarketsScreen({ navigation }) {
 				setInterval(() => {
 					let batchPromises = [];
 					selectedCoins.forEach((coin) => {
-						batchPromises.push(GetAvgRecentPrice(coin));
+						if (!COINS_IGNORE.includes(coin)) batchPromises.push(GetAvgRecentPrice(coin));
 					});
 					Promise.all(batchPromises)
 						.then((results) => {

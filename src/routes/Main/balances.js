@@ -9,7 +9,7 @@ import DonutChart from "../../assets/components/DonutChart";
 import { useEffect } from "react";
 import { functions } from "../../assets/service/Firebase";
 import { GetAvgRecentPrice } from "../../assets/service/Binance";
-import CoinSymbolIcon from "../../assets/svgs";
+import { CoinSymbolIcon, getAvailableCoinSymbols } from "../../assets/svgs";
 
 export default function BalancesScreen({ navigation }) {
 	const colors = useTheme().colors;
@@ -18,14 +18,15 @@ export default function BalancesScreen({ navigation }) {
 	const [data, setData] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const [viewBalance, setViewBalance] = useState(false);
-	const [recentPrices, setRecentPrices] = useState([]);
+	const [recentPrices, setRecentPrices] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const COINS_IGNORE = ["BUSD", "USDT","USDC"];
 	const [coinsInfo, setCoinsInfo] = useState([]);
 	let currencyFormatter = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 	const PRICEUPDATE_INTERVAL = 10000;
 
 	// TODO: remove
-	let selectedCoins = ["BTC", "ETH", "LTC", "BNB", "XRP", "ADA"];
+	let selectedCoins = getAvailableCoinSymbols();
 
 	const loadBalance = async () => {
 		await functions
@@ -41,48 +42,62 @@ export default function BalancesScreen({ navigation }) {
 			});
 	};
 
-	const getPrices = async () => {
-		let batchPromises = [];
-		selectedCoins.forEach((coin) => {
-			if (coin !== "BUSD" || coin !== "USDT") batchPromises.push(GetAvgRecentPrice(coin));
+	const getPrices = () => {
+		return new Promise(async (resolve, reject) => {
+			let _prices = {};
+			let batchPromises = [];
+			let queuedCoins = [];
+			selectedCoins.forEach((coin) => {
+				if (!COINS_IGNORE.includes(coin)) {
+					queuedCoins.push(coin);
+					batchPromises.push(GetAvgRecentPrice(coin));
+				} else {
+					_prices[coin] = null;
+				}
+			});
+			await Promise.all(batchPromises)
+				.then((results) => {
+					results.forEach((result, index) => {
+						_prices[queuedCoins[index]] = result.data.price;
+					});
+					setRecentPrices(_prices);
+					resolve({ success: true });
+				})
+				.catch(reject);
 		});
-		await Promise.all(batchPromises)
-			.then((results) => {
-				let prices = results.map((result) => result.data.price);
-				setRecentPrices(prices);
-			})
-			.catch(console.error);
 	};
 
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		await loadBalance();
-		setRendered(false);
+		setRefreshing(false);
 	}, []);
 
 	useEffect(() => {
-		if (coinsInfo && recentPrices && coinsInfo.length > 0) {
+		if (!!coinsInfo && !!recentPrices && coinsInfo.length > 0) {
 			let _data = [];
 			let _totalBalance = 0;
 			coinsInfo.forEach((coinInfo, index) => {
 				if (coinInfo.free > 0) {
-					const worth = coinInfo.free * recentPrices[index];
+					let worth = null;
+					worth = coinInfo.free * (recentPrices[coinInfo.coin] ?? 1);
+
 					coinInfo.worth = worth;
 					_totalBalance += worth;
 					_data.push(coinInfo);
 				}
 			});
-			console.log(_data);
 			setTotalBalance(_totalBalance);
 			setData(_data);
 		}
 	}, [coinsInfo, recentPrices]);
 
 	useEffect(() => {
-		setLoading(true);
-		Promise.all([getPrices(), loadBalance()]).then((results) => {
+		(async () => {
+			setLoading(true);
+			await Promise.all([getPrices(), loadBalance()]);
 			setLoading(false);
-		});
+		})();
 	}, []);
 
 	return (
@@ -165,7 +180,8 @@ export default function BalancesScreen({ navigation }) {
 					coinsInfo.map((coinInfo, index) => {
 						const coinSymbol = coinInfo.coin;
 						const coinBalance = Number(coinInfo.free).toFixed(8);
-						const coinWorth = currencyFormatter.format(Number(coinInfo.free) * recentPrices[index]);
+						const recentPrice = recentPrices[coinSymbol] ?? 1;
+						const coinWorth = currencyFormatter.format(Number(coinInfo.free) * recentPrice);
 						return (
 							<TouchableHighlight
 								key={index}

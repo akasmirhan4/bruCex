@@ -4,12 +4,14 @@ import BottomSheet from "reanimated-bottom-sheet";
 import { Animated, StyleSheet, View, TouchableHighlight } from "react-native";
 import { Button, Caption, Divider, Modal, Portal, Subheading, Text, Title } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ExchangeModal(props) {
 	const colors = useTheme().colors;
 	const roundness = useTheme().roundness;
 	const [display, setDisplay] = useState("none");
 	const navigation = useNavigation();
+	const insets = useSafeAreaInsets();
 	const renderContent = () => (
 		<View
 			style={{
@@ -91,7 +93,7 @@ export default function ExchangeModal(props) {
 				backgroundColor: "#00000055",
 				opacity: props.opacityAnim,
 				display: display,
-				bottom: 92,
+				bottom: insets.bottom + 52,
 				overflow: "hidden",
 			}}
 		>
