@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/core";
 import React, { useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, TouchableHighlight, View } from "react-native";
+import { RefreshControl, SafeAreaView, TouchableHighlight, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { Button, Caption, Subheading, Title, useTheme } from "react-native-paper";
 import SimpleGraph from "../../../assets/components/SimpleGraph";
 import { GetAvgRecentPrice, GetKlineTrade } from "../../../assets/service/Binance";
@@ -102,9 +103,7 @@ export default function MarketsScreen({ navigation }) {
 	return (
 		<View style={{ flex: 1 }}>
 			<PopUpBottomModal
-				title="Sort By"
 				visible={showSortBy}
-				label={["Hot", "Market Cap", "Price", "24h Change"]}
 				onCloseEnd={() => {
 					setShowSortBy(false);
 				}}

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import MarketsScreen from "./Markets";
-import CoinDetails from "./CoinDetails";
 import Appbar from "../../../assets/components/Appbar";
 
 let MarketStack = createStackNavigator();

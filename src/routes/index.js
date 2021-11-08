@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import MainTabNavigators from "./Main";
 import { createStackNavigator } from "@react-navigation/stack";
-import BuyScreen from "./Main/Exchange/buy";
-import SellScreen from "./Main/Exchange/sell";
-import ConvertScreen from "./Main/Exchange/convert";
+import BuyScreen from "./Main/Exchange/Buy";
+import SellScreen from "./Main/Exchange/Sell";
+import ConvertScreen from "./Main/Exchange/Convert";
 import { Dimensions } from "react-native";
-import { useTheme, useNavigationContainerRef } from "@react-navigation/native";
 import DrawerContent from "./DrawerContent";
 import AuthStackNavigation from "./Auth";
 import Authenticate from "./Auth/Authenticate";
 import CoinDetailsScreen from "./Main/Markets/CoinDetails";
+import DepositScreen from "./Main/Exchange/Deposit";
+import WithdrawScreen from "./Main/Exchange/Withdraw";
+import BalanceDetailsScreen from "./Main/Balances/BalanceDetails";
 
 let AppDrawer = createDrawerNavigator();
 let RootStack = createStackNavigator();
@@ -39,6 +41,9 @@ export default function RootStackNavigation(props) {
 			<RootStack.Screen name="Buy" component={BuyScreen} options={{ headerShown: true }} />
 			<RootStack.Screen name="Sell" component={SellScreen} options={{ headerShown: true }} />
 			<RootStack.Screen name="Convert" component={ConvertScreen} options={{ headerShown: true }} />
+			<RootStack.Screen name="Deposit" component={DepositScreen} options={{ headerShown: true }} />
+			<RootStack.Screen name="Withdraw" component={WithdrawScreen} options={{ headerShown: true }} />
+			<RootStack.Screen name="Balance Details" component={BalanceDetailsScreen} options={{ headerShown: false }} />
 			<RootStack.Screen name="Coin Details" component={CoinDetailsScreen} options={{ headerShown: false }} />
 		</RootStack.Navigator>
 	);

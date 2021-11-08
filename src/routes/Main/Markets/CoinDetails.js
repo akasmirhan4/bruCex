@@ -93,7 +93,7 @@ const Bottombar = (props) => {
 	}
 };
 
-export default function CoinDetails({ navigation, route }) {
+export default function CoinDetailsScreen({ navigation, route }) {
 	const { coinInfo } = route.params;
 	const coin = coinInfo.coin;
 	const roundness = useTheme().roundness;

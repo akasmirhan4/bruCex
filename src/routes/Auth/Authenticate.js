@@ -3,8 +3,8 @@ import { useTheme, useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import { Keyboard, SafeAreaView, ScrollView, TouchableWithoutFeedback, View } from "react-native";
 import { ActivityIndicator, Button, Caption, Divider, IconButton, ProgressBar, Subheading, TextInput, Title } from "react-native-paper";
-import { auth, firebaseConfig, getPhoneNo, setPhoneVerified, userPhoneVerified, validateSendEmail } from "../../assets/service/Firebase";
-import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from "expo-firebase-recaptcha";
+import { auth, firebaseConfig, getPhoneNo, validateSendEmail } from "../../assets/service/Firebase";
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 
 export default function Authenticate({ navigation }) {
 	const colors = useTheme().colors;

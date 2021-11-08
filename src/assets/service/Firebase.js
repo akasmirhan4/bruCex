@@ -2,6 +2,7 @@ import React from "react";
 import firebase from "firebase";
 import "firebase/functions";
 import "firebase/firestore";
+import * as Crypto from "expo-crypto";
 
 const firebaseConfig = {
 	apiKey: "AIzaSyBxE0432ZP7t0LzvKXTk08awGzO8im2Y94",
@@ -107,7 +108,10 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 			await auth()
 				.createUserWithEmailAndPassword(email, password)
 				.then(async (userCredential) => {
+					console.log("im in!");
 					const uid = userCredential.user.uid;
+					const hashedPwd = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, password);
+					console.log(hashedPwd);
 					await firestore
 						.collection("users")
 						.doc(uid)
@@ -129,7 +133,7 @@ const registerNewUser = (firstName, lastName, email, password, checkPassword, ph
 						errors.register.push("Email already registered");
 						reject(errors);
 					} else {
-						errors.warn(error);
+						console.warn(error);
 					}
 				});
 		}
@@ -172,7 +176,7 @@ const validateSendEmail = () => {
 	});
 };
 
-export { firebaseConfig, functions, firestore, auth, loginWithEmailAndPassword, registerNewUser, getPhoneNo, validateSendEmail, GetOutboundIP };
+export { firebaseConfig, functions, firestore, auth, loginWithEmailAndPassword, registerNewUser, getPhoneNo, validateSendEmail };
 
 const generateID = () => {
 	let result = new Date().valueOf() - new Date("June 6, 1997 00:00:00").valueOf();
@@ -184,6 +188,3 @@ const generateID = () => {
 	return parseInt(result2Str);
 };
 
-const GetOutboundIP = async () => {
-	await functions.httpsCallable("GetExchangeInfo")().then(console.log).catch(console.warn);
-};

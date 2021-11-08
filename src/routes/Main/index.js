@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import BalancesScreen from "./balances";
+import BalancesScreen from "./Balances/Balances";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, TouchableWithoutFeedback, View, Animated, Easing } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -12,6 +12,7 @@ import ExchangeModal from "./Exchange/ExchangeModal";
 import SuccessModal from "../../assets/components/SuccessModal";
 import MarketStackNavigation from "./Markets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BalanceStackNavigation from "./Balances";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
@@ -33,7 +34,6 @@ export default function MainTabNavigators({ navigation, route }) {
 	const opacityAnim2 = useRef(new Animated.Value(1)).current;
 	const opacityAnim3 = useRef(new Animated.Value(0)).current;
 	const insets = useSafeAreaInsets();
-	console.log(insets);
 
 	const AnimateIcon = () => {
 		// Animated.sequence([])
@@ -158,12 +158,12 @@ export default function MainTabNavigators({ navigation, route }) {
 				screenOptions={{
 					tabBarShowLabel: false,
 					tabBarActiveTintColor: "#FF0000",
-					header: ({ layout, navigation, options, route }) => {
-						console.log(layout);
+					header: () => {
 						return <Appbar />;
 					},
 					tabBarStyle: { borderTopColor: colors.border, backgroundColor: colors.background, marginBottom: 8 },
 				}}
+				initialRouteName="Markets Stack"
 			>
 				<Tab.Screen
 					name="Markets Stack"
@@ -178,7 +178,7 @@ export default function MainTabNavigators({ navigation, route }) {
 						tabPress: (e) => {
 							e.preventDefault();
 							if (!modalVisible) {
-								navigation.navigate("Markets");
+								navigation.navigate("Markets Stack");
 							}
 						},
 					})}
@@ -231,9 +231,10 @@ export default function MainTabNavigators({ navigation, route }) {
 					})}
 				/>
 				<Tab.Screen
-					name="Balances"
-					component={BalancesScreen}
+					name="Balances Stack"
+					component={BalanceStackNavigation}
 					options={{
+						headerShown: false,
 						tabBarIcon: ({ focused, color, size }) => {
 							return <AnimatedIcon name="wallet" color={focused ? colors.active : colors.inactive} size={ICON_SIZE} style={{ opacity: opacityAnim2 }} />;
 						},
@@ -242,7 +243,7 @@ export default function MainTabNavigators({ navigation, route }) {
 						tabPress: (e) => {
 							e.preventDefault();
 							if (!modalVisible) {
-								navigation.navigate("Balances");
+								navigation.navigate("Balances Stack");
 							}
 						},
 					})}

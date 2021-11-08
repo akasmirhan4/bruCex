@@ -1,46 +1,48 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useTheme, useNavigation } from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from "react";
+import { useTheme } from "@react-navigation/native";
 import BottomSheet from "reanimated-bottom-sheet";
-import { Animated, StyleSheet, View, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
-import { Button, Caption, Divider, Modal, Portal, Subheading, Text, Title } from "react-native-paper";
+import { View, TouchableHighlight, TouchableWithoutFeedback } from "react-native";
+import { Caption, Divider, Portal, Subheading } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import { color } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function SortByModal(props) {
+export default function PopUpBottomModal(props) {
+	const insets = useSafeAreaInsets();
 	const colors = useTheme().colors;
 	const roundness = useTheme().roundness;
 	const sheetRef = useRef(null);
 	const [visible, setVisible] = useState(false);
 	const [selected, setSelected] = useState("Hot");
-	const sortLabels = ["Hot", "Market Cap", "Price", "24h Change"];
+	const labels = props.label;
 	const LABEL_HEIGHT = 10;
 	const renderContent = () => (
 		<View
 			style={{
 				backgroundColor: colors.background,
-				height: 330,
+				width: "100%",
+				height: "100%",
 				alignItems: "center",
 			}}
 		>
 			<View style={{ width: "100%", alignItems: "center", paddingVertical: LABEL_HEIGHT }}>
-				<Caption>Sort By</Caption>
+				<Caption>{props.title}</Caption>
 			</View>
-			{sortLabels.map((sortLabel, index) => {
-				const color = sortLabel == selected ? colors.primary : colors.caption;
+			{labels.map((label, index) => {
+				const color = label == selected ? colors.primary : colors.caption;
 				return (
 					<View key={index} style={{ width: "100%", alignItems: "center", marginLeft: 8 }}>
 						<Divider style={{ width: "100%" }} />
 						<TouchableHighlight
 							onPress={() => {
-								setSelected(sortLabel);
+								setSelected(label);
 								sheetRef.current.snapTo(1);
-								props.onLabelChange(sortLabel);
+								props.onLabelChange(label);
 							}}
 							style={{ width: "100%", alignItems: "center" }}
 							underlayColor="#FFFFFF11"
 						>
 							<View style={{ flexDirection: "row", paddingVertical: LABEL_HEIGHT, alignItems: "center" }}>
-								<Subheading style={{ color: color }}>{sortLabel}</Subheading>
+								<Subheading style={{ color: color }}>{label}</Subheading>
 								<Ionicons name="arrow-down" style={{ marginHorizontal: 2 }} size={16} color={color} />
 							</View>
 						</TouchableHighlight>
@@ -82,7 +84,7 @@ export default function SortByModal(props) {
 					<BottomSheet
 						ref={sheetRef}
 						initialSnap={1}
-						snapPoints={[330, 0]}
+						snapPoints={[45 + labels.length * 50 + 50 + insets.bottom, 0]}
 						borderRadius={roundness}
 						renderContent={renderContent}
 						onCloseEnd={props.onCloseEnd}
